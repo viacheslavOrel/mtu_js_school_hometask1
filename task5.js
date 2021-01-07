@@ -1,13 +1,15 @@
 module.exports = (arr, value) => {
     let currIndex = arr.findIndex(item => item === value);
 
-    if (currIndex === -1) {
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i] > value) return i;
-        }
+    if (currIndex !== -1) return currIndex;
 
-        return arr.length;
-    }
+    return findNewIndex(arr, value);
+}
 
-    return currIndex;
+
+function findNewIndex(arr, value) {
+    const currIndex = arr.findIndex(item => item > value);
+
+    if (currIndex !== -1) return currIndex;
+    return arr.length;
 }
