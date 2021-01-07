@@ -1,37 +1,50 @@
 module.exports = romanNumber => {
-    const translateNumeral = number => {
-        switch (number) {
-            case 'I':
-                return 1;
-            case 'V':
-                return 5;
-            case 'X':
-                return 10;
-            case 'L':
-                return 50;
-            case 'C':
-                return 100;
-            case 'D':
-                return 500;
-            case 'M':
-                return 1000;
-        }
+    if (romanNumber.length === 0) {
+        throw new Error('Input string is empty');
     }
 
-    let result = 0;
-    let prevNum = translateNumeral(romanNumber[0]);
+    const helper = new RomanNumberHelper();
 
-    for (let i = 1; i < romanNumber.length; i++) {
-        const currNum = translateNumeral(romanNumber[i]);
+    return romanNumber.split('')
+        .reduce((acc, val) => helper.convertChar(acc, val), 0) + helper.prevNum;
+}
 
-        if (prevNum < currNum && currNum <= prevNum * 10) {
-            result += currNum - prevNum;
-            prevNum = 0;
+class RomanNumberHelper {
+    constructor() {
+        this.prevNum = 0;
+    }
+
+    romanDictionary = new Map([
+        ['I', 1],
+        ['V', 5],
+        ['X', 10],
+        ['L', 50],
+        ['C', 100],
+        ['D', 500],
+        ['M', 1000]
+    ]);
+
+    getCurrentNumber(char) {
+        const result = this.romanDictionary.get(char.toUpperCase());
+
+        if (result === undefined) {
+            throw new Error(`Symbol ${char} is not correct`);
+        }
+
+        return result;
+    }
+
+    convertChar(result, currValue) {
+        const currNum = this.getCurrentNumber(currValue);
+
+        if (this.prevNum < currNum && currNum <= this.prevNum * 10) {
+            result += currNum - this.prevNum;
+            this.prevNum = 0;
         } else {
-            result += prevNum;
-            prevNum = currNum;
+            result += this.prevNum;
+            this.prevNum = currNum;
         }
-    }
 
-    return result + prevNum;
+        return result;
+    }
 }
